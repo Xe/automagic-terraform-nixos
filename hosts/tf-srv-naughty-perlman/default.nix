@@ -3,7 +3,7 @@
 
   boot.cleanTmpDir = true;
   zramSwap.enable = true;
-  networking.hostName = "tf-srv-cool-gauss";
+  networking.hostName = "tf-srv-naughty-perlman";
   services.openssh.enable = true;
   services.tailscale.enable = true;
   networking.firewall.checkReversePath = "loose";
