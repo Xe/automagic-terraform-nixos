@@ -55,7 +55,7 @@ write_files:
 - path: /etc/nixos/host.nix
   permissions: '0644'
   content: |
-    {pkgs, ...}:
+    { pkgs, ... }:
     {
       services.tailscale.enable = true;
 
@@ -65,7 +65,7 @@ write_files:
         wants = [ "network-pre.target" "tailscale.service" ];
         wantedBy = [ "multi-user.target" ];
         serviceConfig.Type = "oneshot";
-        path = with pkgs; [ jq tailscale ]
+        path = with pkgs; [ jq tailscale ];
         script = ''
           sleep 2
           status="$(tailscale status -json | jq -r .BackendState)"

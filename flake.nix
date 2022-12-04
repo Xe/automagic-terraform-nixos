@@ -11,7 +11,7 @@
       mkSystem = extraModules:
         nixpkgs.lib.nixosSystem rec {
           system = "x86_64-linux";
-          modules = [ ] ++ extraModules;
+          modules = [ ./common ] ++ extraModules;
         };
     in flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
       let pkgs = import nixpkgs { inherit system; };
