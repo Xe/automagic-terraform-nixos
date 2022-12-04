@@ -15,10 +15,18 @@ fi
 server_name="$1"
 public_ip="$2"
 
+ssh_ignore(){
+    ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no $*
+}
+
+ssh_victim(){
+    ssh_ignore root@"${public_ip}" $*
+}
+
 mkdir -p "./hosts/${server_name}"
 echo "${public_ip}" >> ./hosts/"${server_name}"/public-ip
 
-until ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no "root@${server_name}" uname -av
+until ssh_ignore "root@${server_name}" uname -av
 do
     sleep 30
 done
@@ -49,6 +57,7 @@ nix build .#nixosConfigurations."${server_name}".config.system.build.toplevel
 
 export NIX_SSHOPTS='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 nix-copy-closure -s root@"${public_ip}" $(readlink ./result)
-ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@"${public_ip}" $(readlink ./result)/bin/switch-to-configuration switch
+ssh_victim nix-env --profile /nix/var/nix/profiles/system --set $(readlink ./result)
+ssh_victim $(readlink ./result)/bin/switch-to-configuration switch
 
 git push
