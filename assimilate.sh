@@ -37,7 +37,7 @@ cat <<-EOC >> ./hosts/"${server_name}"/default.nix
   services.tailscale.enable = true;
   networking.firewall.checkReversePath = "loose";
   users.users.root.openssh.authorizedKeys.keys = [
-    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM6NPbPIcCTzeEsjyx0goWyj6fr2qzcfKCCdOUqg0N/" # alrest
+    "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM6NPbPIcCTzeEsjyx0goWyj6fr2qzcfKCCdOUqg0N/v" # alrest
   ];
   system.stateVersion = "23.05";
 }
