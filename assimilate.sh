@@ -48,11 +48,11 @@ cat <<-EOC >> ./hosts/"${server_name}"/default.nix
 EOC
 
 git add .
+git commit -sm "add machine ${server_name}: ${public_ip}"
 nix build .#nixosConfigurations."${server_name}".config.system.build.toplevel
 
 export NIX_SSHOPTS='-o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'
 nix-copy-closure -s root@"${public_ip}" $(readlink ./result)
 ssh -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no root@"${public_ip}" $(readlink ./result)/bin/switch-to-configuration switch
 
-git commit -sm "add machine ${server_name}: ${public_ip}"
 git push
