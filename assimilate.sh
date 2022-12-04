@@ -4,15 +4,11 @@ set -e
 [ ! -z "$DEBUG" ] && set -x
 
 USAGE(){
-    echo "Usage: `basename $0` <server_name> <public_ipv4>"
+    echo "Usage: `basename $0` <server_name>"
     exit 2
 }
 
 if [ -z "$1" ]; then
-    USAGE
-fi
-
-if [ -z "$2" ]; then
     USAGE
 fi
 
