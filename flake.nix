@@ -16,7 +16,7 @@
     in flake-utils.lib.eachSystem [ "x86_64-linux" "aarch64-linux" ] (system:
       let pkgs = import nixpkgs { inherit system; };
       in rec {
-        devShell =
+        devShells.default =
           pkgs.mkShell { buildInputs = with pkgs; [ terraform awscli2 ]; };
       }) // {
         nixosConfigurations = let hosts = builtins.readDir ./hosts;

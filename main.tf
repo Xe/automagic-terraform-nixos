@@ -21,18 +21,23 @@ terraform {
 }
 
 provider "scaleway" {
-  zone   = "fr-par-1"
-  region = "fr-par"
+  zone       = "fr-par-1"
+  region     = "fr-par"
+  project_id = var.project_id
 }
 
 variable "project_id" {
   type        = string
   description = "Your Scaleway project ID."
-  default     = "2ce6d960-f3ad-44bf-a761-28725662068a"
+}
+
+variable "route53_zone" {
+  type        = string
+  description = "DNS name of your route53 zone, ends in ."
 }
 
 data "aws_route53_zone" "dns" {
-  name = "xeserv.us."
+  name = var.route53_zone
 }
 
 data "cloudinit_config" "prod" {
@@ -84,9 +89,7 @@ EOT
   }
 }
 
-resource "scaleway_instance_ip" "prod" {
-  project_id = var.project_id
-}
+resource "scaleway_instance_ip" "prod" {}
 
 resource "tailscale_tailnet_key" "prod" {
   reusable      = true
@@ -98,7 +101,6 @@ resource "tailscale_tailnet_key" "prod" {
 resource "scaleway_instance_server" "prod" {
   type        = "DEV1-S"
   image       = "ubuntu_jammy"
-  project_id  = var.project_id
   ip_id       = scaleway_instance_ip.prod.id
   enable_ipv6 = true
   cloud_init  = data.cloudinit_config.prod.rendered
@@ -116,7 +118,7 @@ resource "scaleway_instance_server" "prod" {
 
 resource "aws_route53_record" "prod_A" {
   zone_id = data.aws_route53_zone.dns.zone_id
-  name    = "prod.xeserv.us."
+  name    = "prod"
   type    = "A"
   records = [scaleway_instance_ip.prod.address]
   ttl     = 300
@@ -124,7 +126,7 @@ resource "aws_route53_record" "prod_A" {
 
 resource "aws_route53_record" "prod_AAAA" {
   zone_id = data.aws_route53_zone.dns.zone_id
-  name    = "prod.xeserv.us."
+  name    = "prod"
   type    = "AAAA"
   records = [scaleway_instance_server.prod.ipv6_address]
   ttl     = 300
